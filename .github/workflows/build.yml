@@ -23,30 +23,9 @@ jobs:
           pip install -r requirements.txt
 
       - name: Build with PyInstaller
+        shell: cmd
         run: |
-          pyinstaller ^
-            --name="轻松评" ^
-            --onefile ^
-            --windowed ^
-            --icon="轻松评.ico" ^
-            --hidden-import=pandas.core.arrays.integer ^
-            --hidden-import=pandas.core.arrays.floating ^
-            --hidden-import=pandas.core.arrays.boolean ^
-            --hidden-import=pandas.core.arrays.string_ ^
-            --hidden-import=pandas._libs.tslibs.np_datetime ^
-            --hidden-import=openpyxl.cell._writer ^
-            --hidden-import=openpyxl.styles.styleable ^
-            --hidden-import=tkinter ^
-            --hidden-import=tkinter.filedialog ^
-            --hidden-import=tkinter.messagebox ^
-            --hidden-import=tkinter.scrolledtext ^
-            --hidden-import=tkinter.ttk ^
-            --hidden-import=tkinter.commondialog ^
-            --collect-all pandas ^
-            --collect-all openpyxl ^
-            --clean ^
-            --noconfirm ^
-            "轻松评20260623.py"
+          pyinstaller --name="轻松评" --onefile --windowed --icon="轻松评.ico" --hidden-import=pandas.core.arrays.integer --hidden-import=pandas.core.arrays.floating --hidden-import=pandas.core.arrays.boolean --hidden-import=pandas.core.arrays.string_ --hidden-import=pandas._libs.tslibs.np_datetime --hidden-import=openpyxl.cell._writer --hidden-import=openpyxl.styles.styleable --hidden-import=tkinter --hidden-import=tkinter.filedialog --hidden-import=tkinter.messagebox --hidden-import=tkinter.scrolledtext --hidden-import=tkinter.ttk --hidden-import=tkinter.commondialog --collect-all pandas --collect-all openpyxl --clean --noconfirm "轻松评20260623.py"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
