@@ -2,41 +2,44 @@ name: Build 轻松评 Win7 32-bit
 
 on:
   push:
+    branches: [main, master]
     tags: ['v*']
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest  # 改为 windows-latest，比 windows-2019 更容易分配到运行器
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Python 3.8 x86
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.8'
           architecture: 'x86'
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip setuptools wheel
+          pip install pandas==1.3.5 numpy==1.21.6 openpyxl==3.0.10 pyinstaller==4.10
 
-      - name: Build with PyInstaller
+      - name: Build executable
         shell: cmd
-        run: |
-          pyinstaller --name="轻松评" --onefile --windowed --icon="轻松评.ico" --hidden-import=pandas.core.arrays.integer --hidden-import=pandas.core.arrays.floating --hidden-import=pandas.core.arrays.boolean --hidden-import=pandas.core.arrays.string_ --hidden-import=pandas._libs.tslibs.np_datetime --hidden-import=openpyxl.cell._writer --hidden-import=openpyxl.styles.styleable --hidden-import=tkinter --hidden-import=tkinter.filedialog --hidden-import=tkinter.messagebox --hidden-import=tkinter.scrolledtext --hidden-import=tkinter.ttk --hidden-import=tkinter.commondialog --collect-all pandas --collect-all openpyxl --clean --noconfirm "轻松评20260623.py"
+        run: pyinstaller --name="轻松评" --onefile --windowed --icon="轻松评.ico" --hidden-import=pandas.core.arrays.integer --hidden-import=pandas.core.arrays.floating --hidden-import=pandas.core.arrays.boolean --hidden-import=pandas.core.arrays.string_ --hidden-import=pandas._libs.tslibs.np_datetime --hidden-import=openpyxl.cell._writer --hidden-import=openpyxl.styles.styleable --hidden-import=tkinter --hidden-import=tkinter.filedialog --hidden-import=tkinter.messagebox --hidden-import=tkinter.scrolledtext --hidden-import=tkinter.ttk --hidden-import=tkinter.commondialog --collect-all pandas --collect-all openpyxl --clean --noconfirm "轻松评20260623.py"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: 轻松评-Win7-32bit
           path: dist/轻松评.exe
+          retention-days: 30
 
-      - name: Release
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
         with:
           files: dist/轻松评.exe
+          name: 轻松评 ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
