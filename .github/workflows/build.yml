@@ -1,0 +1,63 @@
+name: Build 轻松评 Win7 32-bit
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python 3.8 x86
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          architecture: 'x86'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller ^
+            --name="轻松评" ^
+            --onefile ^
+            --windowed ^
+            --icon="轻松评.ico" ^
+            --hidden-import=pandas.core.arrays.integer ^
+            --hidden-import=pandas.core.arrays.floating ^
+            --hidden-import=pandas.core.arrays.boolean ^
+            --hidden-import=pandas.core.arrays.string_ ^
+            --hidden-import=pandas._libs.tslibs.np_datetime ^
+            --hidden-import=openpyxl.cell._writer ^
+            --hidden-import=openpyxl.styles.styleable ^
+            --hidden-import=tkinter ^
+            --hidden-import=tkinter.filedialog ^
+            --hidden-import=tkinter.messagebox ^
+            --hidden-import=tkinter.scrolledtext ^
+            --hidden-import=tkinter.ttk ^
+            --hidden-import=tkinter.commondialog ^
+            --collect-all pandas ^
+            --collect-all openpyxl ^
+            --clean ^
+            --noconfirm ^
+            "轻松评20260623.py"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: 轻松评-Win7-32bit
+          path: dist/轻松评.exe
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/轻松评.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
