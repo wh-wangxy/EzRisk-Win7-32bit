@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-latest  # 改为 windows-latest，比 windows-2019 更容易分配到运行器
     steps:
       - uses: actions/checkout@v3
 
