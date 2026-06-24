@@ -24,26 +24,21 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install pandas==1.3.5 numpy==1.21.6 openpyxl==3.0.10 pyinstaller==4.10
 
-      - name: Build executable (onedir mode)
+      - name: Build executable (onefile, no collect-all)
         shell: cmd
-        run: pyinstaller --name="轻松评" --onedir --windowed --icon="轻松评.ico" --hidden-import=pandas.core.arrays.integer --hidden-import=pandas.core.arrays.floating --hidden-import=pandas.core.arrays.boolean --hidden-import=pandas.core.arrays.string_ --hidden-import=pandas._libs.tslibs.np_datetime --hidden-import=openpyxl.cell._writer --hidden-import=openpyxl.styles.styleable --hidden-import=tkinter --hidden-import=tkinter.filedialog --hidden-import=tkinter.messagebox --hidden-import=tkinter.scrolledtext --hidden-import=tkinter.ttk --hidden-import=tkinter.commondialog --clean --noconfirm "轻松评20260623.py"
-
-      - name: Package into zip
-        shell: pwsh
-        run: |
-          Compress-Archive -Path "dist\轻松评\*" -DestinationPath "轻松评-Win7-32bit.zip"
+        run: pyinstaller --name="轻松评" --onefile --windowed --icon="轻松评.ico" --hidden-import=pandas --hidden-import=pandas.core.arrays.integer --hidden-import=pandas.core.arrays.floating --hidden-import=pandas.core.arrays.boolean --hidden-import=pandas.core.arrays.string_ --hidden-import=pandas._libs.tslibs.np_datetime --hidden-import=openpyxl --hidden-import=openpyxl.cell._writer --hidden-import=openpyxl.styles.styleable --hidden-import=tkinter --hidden-import=tkinter.filedialog --hidden-import=tkinter.messagebox --hidden-import=tkinter.scrolledtext --hidden-import=tkinter.ttk --hidden-import=tkinter.commondialog --clean --noconfirm "轻松评20260623.py"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: 轻松评-Win7-32bit
-          path: 轻松评-Win7-32bit.zip
+          path: dist/轻松评.exe
           retention-days: 30
 
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
         with:
-          files: 轻松评-Win7-32bit.zip
+          files: dist/轻松评.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
